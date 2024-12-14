@@ -2,6 +2,7 @@ const https=require('https');
 const fs=require('fs');
 const path=require('path');
 const express=require('express');
+const routes=require('../routes/routes');
 
 const app=express();
 const options={
@@ -10,9 +11,7 @@ const options={
 }
 
 const server=https.createServer(options,app);
-app.get('/',(req,res)=>{
-    res.send('Hello World');
-});
+app.use('/',routes);
 const port=3000;
 server.listen(port,()=>{
     console.log(`Server is running on https://localhost:${port}`);
