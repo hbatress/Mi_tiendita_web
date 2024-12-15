@@ -1,7 +1,7 @@
 # Ignorar archivos de llaves
 key.pem
 cert.pem
-
+generate-cert.js
 
 # Ignorar archivo de variables de entorno
 .env
