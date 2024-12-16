@@ -1,6 +1,7 @@
 const express = require("express");
 const routes = express.Router();
 const { sql, poolPromise } = require("../db/database");
+const { MAX } = require("mssql");
 routes.use(express.json());
 
 routes.get("/", (req, res) => {
@@ -56,6 +57,8 @@ routes.get("/historial_pedidos", async (req, res) => {
     res.status(500).send("Error en la consulta");
   }
 });
+
+/*api para procesar los pedidos de los clientes */
 routes.post("/procesar_orden", async (req, res) => {
   const {
     id_usuario,
@@ -65,7 +68,7 @@ routes.post("/procesar_orden", async (req, res) => {
     id_metodo_pago,
     nombre_factura,
     nit,
-  } = req.body; 
+  } = req.body;
   try {
     const pool = await poolPromise;
     const result = await pool
@@ -78,13 +81,39 @@ routes.post("/procesar_orden", async (req, res) => {
       .input("nombre_factura", sql.VarChar(200), nombre_factura)
       .input("nit", sql.VarChar(20), nit)
       .execute("procesar_orden");
-    if (result.recordset.length == 0) {
-      res.status(404).send("Sin datos");
+    if (result.rowsAffected[0] > 0) {
+      res.status(200).send("Orden procesada exitosamente");
     } else {
-      res.json(result.recordset);
+      res.status(400).send("No se pudo procesar la orden");
     }
   } catch (error) {
-    res.status(500).send("Error en la consulta");
+    res.status(500).send(`Error en la consulta: ${error.message}`);
+  }
+});
+
+routes.post("/insert_producto", async (req, res) => {
+  const { categoria, producto, marca, codigo, stock, precio, imagen } = req.body;
+
+  try {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("id_categoria", sql.Int, categoria)
+      .input("nombre", sql.VarChar(100), producto)
+      .input("marca", sql.VarChar(50), marca)
+      .input("codigo", sql.VarChar(20), codigo)
+      .input("stock", sql.Float, stock)
+      .input("precio", sql.Float, precio)
+      .input("imagen", sql.VarChar(sql.MAX), imagen)
+      .execute("insertar_producto");
+
+    if (result.rowsAffected[0] > 0) {
+      res.status(200).json({ message: "Producto insertado correctamente" });
+    } else {
+      res.status(400).json({ message: "No se pudo insertar el producto" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: `Error al insertar el producto: ${err.message}` });
   }
 });
 
