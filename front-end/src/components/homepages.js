@@ -17,10 +17,11 @@ function Homepages() {
         
         {products.map((product) => (
           <div key={product.id_producto}>
-            <img src={product.imagen} alt={product.nombre} style={{ maxWidth: '100px' }} />
-            <p> {product.nombre}</p>
-            <p>Q{product.precio}</p>
-            
+            <img  src={product.imagen} alt={product.nombre} />
+            <div >
+            <p > {product.nombre}</p>
+            <p >Q{product.precio}</p>
+            </div>
           </div>
         ))}
       </div>
