@@ -117,4 +117,17 @@ routes.post("/insert_producto", async (req, res) => {
   }
 });
 
+routes.get("/categorias", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request().execute("Listar_categoria");
+    if (result.recordset.length == 0) {
+      res.status(404).send("Sin datos");
+    } else {
+      res.json(result.recordset);
+    }
+  } catch (error) {
+    res.status(500).send("Error en la consulta");
+  }
+});
 module.exports = routes;
