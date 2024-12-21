@@ -1,10 +1,14 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Homepages from './components/homepages';
+import ProductPage from './pages/ProductPage'; // Asegúrate de tener este componente
+
 function App() {
   return (
-    <div className="App">
-      <Homepages />
-    </div>
+    <Routes>
+      <Route path="/" element={<Homepages />} />
+      <Route path="/product/:id" element={<ProductPage />} />
+    </Routes>
   );
 }
 
